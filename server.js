@@ -1,6 +1,7 @@
 const express = require('express');
 const logger = require('./middleware/logger-middleware');
 const server = express();
+const postRouter = require('./posts/postRouter')
 
 
 server.get('/', logger('test'), (req, res) => {
@@ -8,6 +9,8 @@ server.get('/', logger('test'), (req, res) => {
 });
 
 //custom middleware
+server.use(express.json())
+server.use('/api/post', logger('Logger for Posts'), postRouter)
 
 
 module.exports = server;
