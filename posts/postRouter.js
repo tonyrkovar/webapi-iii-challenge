@@ -12,18 +12,14 @@ router.get('/', (req, res) => {
         })
 });
 
-router.get('/:id', (req, res) => {
-    const { id } = req.params
-    Routes.getById(id)
+router.get('/:id', validatePostId, (req, res) => {
+    Routes.getById(req.params.id)
         .then(post => {
             res.status(200).json(post)
         })
-        .catch(err => {
-            res.status(400).json({ error: `${err}` })
-        })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validatePostId, (req, res) => {
     const { id } = req.params
     Routes.remove(id)
         .then(deleted => {
@@ -34,19 +30,25 @@ router.delete('/:id', (req, res) => {
         })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validatePostId, (req, res) => {
     const { id } = req.params;
     const data = req.body;
     Routes.update(id, data)
         .then(updateCount => {
-            res.status(200).json("updated")
+            res.status(200).json(`updated ${updateCount.length}`)
         })
 });
 
 // custom middleware
 
 function validatePostId(req, res, next) {
-
+    const id = req.params.id;
+    if (id) {
+        next()
+    } else {
+        res.status(400).json({ error: "Invalid ID" })
+    }
 };
+
 
 module.exports = router;
